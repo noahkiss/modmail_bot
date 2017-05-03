@@ -1,0 +1,8 @@
+client_id = "XXX"
+client_secret = "XXX"
+password = "XXX"
+user_agent = "modmail_bot by /u/XXX"
+username = "XXX"
+main_sub = "XXX"
+modmail_sub = "XXX_modmail"
+backroom_sub = "XXX_mods"
