@@ -15,24 +15,24 @@ r = praw.Reddit(client_id=client_id,
                 password=password)
 
 if unban_sub != False:
-  unban_sub  = r.subreddit(unban_sub)
-main_sub     = r.subreddit(main_sub)
-modmail_sub  = r.subreddit(modmail_sub)
-backroom_sub = r.subreddit(backroom_sub)
+  sub_unban  = r.subreddit(unban_sub)
+sub_main     = r.subreddit(main_sub)
+sub_modmail  = r.subreddit(modmail_sub)
+sub_backroom = r.subreddit(backroom_sub)
 
 if __name__ == '__main__':
   moderators = []
-  for mod in main_sub.moderator():
+  for mod in sub_main.moderator():
     if 'all' in mod.mod_permissions or 'mail' in mod.mod_permissions:
       try:
-        modmail_sub.contributor.add(mod.name)
+        sub_modmail.contributor.add(mod.name)
       except:
         pass
       try: 
-        unban_sub.contributor.add(mod.name)
+        sub_unban.contributor.add(mod.name)
       except:
         pass
       try: 
-        backroom_sub.contributor.add(mod.name)
+        sub_backroom.contributor.add(mod.name)
       except:
         pass
