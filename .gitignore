@@ -1,3 +1,4 @@
 secrets.py
 *.db
 __pycache__
+ideas
