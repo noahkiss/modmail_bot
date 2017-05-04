@@ -12,17 +12,23 @@ read modmail
 [flair] /u/user (if not mod/AM) - title
 
 check for artwork for unbans - sent by user, image link
+private moderator note to remind of unban image text format?
 '''
 
-import time
-
+import sqlite3
 import praw
 
-from secrets import client_id, client_secret, password, user_agent, username, main_sub, modmail_sub, backroom_sub
+from secrets import client_id, client_secret, password, user_agent, username, modmail_db, mods_db, main_sub, modmail_sub, backroom_sub
 try:
   from secrets import unban_sub
 except ImportError:
   unban_sub = False
+
+modmail_db   = sqlite3.connect(modmail_db)
+mods_db      = sqlite3.connect(mods_db)
+
+modmail_curs = modmail_db.cursor()
+mods_curs    = mods_db.cursor()
 
 r = praw.Reddit(client_id=client_id,
                 client_secret=client_secret,
@@ -31,10 +37,36 @@ r = praw.Reddit(client_id=client_id,
                 password=password)
 
 if unban_sub != False:
-  unban_sub  = r.subreddit(unban_sub)
-main_sub     = r.subreddit(main_sub)
-modmail_sub  = r.subreddit(modmail_sub)
-backroom_sub = r.subreddit(backroom_sub)
+  sub_unban  = r.subreddit(unban_sub)
+sub_main     = r.subreddit(main_sub)
+sub_modmail  = r.subreddit(modmail_sub)
+sub_backroom = r.subreddit(backroom_sub)
+
+def read_modmail():
+  pass
+
+def mailNew(id):
+  pass
+
+def mailOld(id):
+  pass
+
+def mailMod(id):
+  pass
+
+def threadPost(user, title, flair=None):
+  pass
+
+def threadUpdate(id):
+  pass
+
+def postArt(user, title, url):
+  if unban_sub == False:
+    pass
+  else:
+    pass
 
 if __name__ == '__main__':
   pass
+#modmailDB.commit()
+#modmailDB.close()
