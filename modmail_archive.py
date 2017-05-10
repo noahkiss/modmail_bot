@@ -87,7 +87,7 @@ def db_read(id):
 def db_write(modmail_id, replies, thread_id=None):
   db = sqlite3.connect(modmail_db)
   curs = db.cursor()
-  exists = db_read(modmail_id)
+  exists, asdf = db_read(modmail_id)
 
   if exists == False:
     curs.execute('''INSERT INTO modmail(modmail_id, backroom_id, replies) VALUES(?,?,?)''', (modmail_id, thread_id, replies))
