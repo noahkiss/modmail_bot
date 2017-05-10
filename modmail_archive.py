@@ -1,31 +1,12 @@
 #!/usr/bin/python3
-
-'''
-read modmail
-  new modmail?
-    add id to db, make post in modmail sub, add username to user column, save post id link
-  old mail?
-    find id in db, update post in modmail sub (under x chars - 10000?), add number for each mod who answered
-  mod discussion? ban thread? AM link? 
-    add that flair - ignore AM? up to debate to track users
-
-[flair] /u/user (if not mod/AM) - title
-
-check for artwork for unbans - sent by user, image link
-private moderator note to remind of unban image text format?
-private mod note for suicide thingy?
-'''
+#praw 4.5.1
 
 from time import sleep
 
 import sqlite3
 import praw
 
-from secrets import client_id, client_secret, password, user_agent, username, modmail_db, mods_db, main_sub, modmail_sub, backroom_sub
-try:
-  from secrets import unban_sub
-except ImportError:
-  unban_sub = False
+from secrets import client_id, client_secret, password, user_agent, username, modmail_db, mods_db, main_sub, modmail_sub
 
 r = praw.Reddit(client_id=client_id,
                 client_secret=client_secret,
@@ -33,11 +14,8 @@ r = praw.Reddit(client_id=client_id,
                 username=username,
                 password=password)
 
-if unban_sub != False:
-  sub_unban  = r.subreddit(unban_sub)
 sub_main     = r.subreddit(main_sub)
 sub_modmail  = r.subreddit(modmail_sub)
-sub_backroom = r.subreddit(backroom_sub)
 
 def read_modmail():
   for mail in sub_main.modmail.conversations():
@@ -47,60 +25,82 @@ def read_modmail():
     title = mail.authors[0].name + " | " + mail.subject + " (" + mail.messages[0].date[:10] + ")"
 
     for message in mail.messages:
-      post_body += "####/u/" + message.author.name + ":"
+      post_body += "####[/u/" + message.author.name
       if message.is_internal:
-        post_body += " (Private)"
-      if mail.authors[0].name == message.author.name:
-        post_body += " (OP)"
+        post_body += " (private)](/#private)"
+      elif mail.authors[0].name == message.author.name:
+        post_body += " (user)](/#op)"
+      else:
+        post_body += "](/#mod)"
       post_body +=  "\n\n" + message.body_markdown + "\n\n---\n\n"
 
     mail_exists, num_replies = db_read(id=mail.id)
 
-    if mail_exists:
+    if mail_exists != False:
       if mail.num_messages > num_replies:
-        mail_old(mail.id, post_body)
-        #count all new mails, add mod action for mod
+        mail_old(mail, post_body)
+
+        #TODO count all new mails, add mod action for mod
     else:
+      mail_new(mail, post_body, title)
+
       #if mail.is_internal: figure out how to read mod discussions tbd
       # if mail.subject == "You've been banned from participating in r/" + mail.owner.display_name:
       #   title += " [Ban thread]" just do this with automod?
-      mail_new(mail.id, post_body, title)
-      #add mod actions for mods
+      # add mod actions for mods
 
-def mail_new(id, body, title):
-  print(title)
-  #write db for new mail here after submitting
+def mail_new(mail, body, title):
+  post = sub_modmail.submit(title, selftext=body, send_replies=False)
+  print(title + " || " + str(mail.num_messages))
+  db_write(mail.id, mail.num_messages, thread_id=post.id)
 
-def mail_old(id, body):
-  print(id)
+def mail_old(mail, body):
+  thread_id = db_read(mail.id)
+  db_write(mail.id, mail.num_replies)
+  submission = sub_modmail.Submission(r, id=thread_id)
 
-# def post_art(user, title, image_url):
-#   if unban_sub != False:
-#     post_title = title + " by /u/" + user
-#     sub_unban.submit(post_title, url=image_url, send_replies=False)
-#   else:
-#     pass
+  try:
+    submission.edit(body)
+  except:
+    post = sub_modmail.submit(submission.title, selftext=body, send_replies=False)
+    submission.delete()
+    db_write(mail.id, mail.num_messages, thread_id=post.id)
 
 def db_read(id):
   exists = False
+  replies = 0
   db = sqlite3.connect(modmail_db)
   curs = db.cursor()
 
-  #exists = True
-  #read post id, if it exists return true and actions, if not return false and zero
+  curs.execute('''SELECT modmail_id, backroom_id, replies FROM modmail''')
+  rows = curs.fetchall()
+  
+  for row in rows:
+    if row[0] == id:
+      exists = row[1]
+      replies = row[2]
+      break
 
-  db.commit()
   db.close()
-  return exists, 2
+  return exists, replies
 
-def db_write(id):
+def db_write(modmail_id, replies, thread_id=None):
   db = sqlite3.connect(modmail_db)
   curs = db.cursor()
+  exists = db_read(modmail_id)
+
+  if exists == False:
+    curs.execute('''INSERT INTO modmail(modmail_id, backroom_id, replies) VALUES(?,?,?)''', (modmail_id, thread_id, replies))
+  else:
+    if thread_id == None:
+      curs.execute('''UPDATE modmail SET replies = ? WHERE modmail_id = ?''', (replies, modmail_id))
+    else:
+      curs.execute('''UPDATE modmail SET backroom_id = ?, replies = ? WHERE modmail_id = ?''', (thread_id, replies, modmail_id))
 
   db.commit()
   db.close()
 
-def db_mod_numbers(user):
+def db_mod_actions(user):
   db = sqlite3.connect(mods_db)
   curs = db.cursor()
 
