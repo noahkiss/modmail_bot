@@ -1,8 +1,6 @@
 #!/usr/bin/python3
 #praw 4.5.1
 
-from time import sleep
-
 import sqlite3
 import praw
 
@@ -17,54 +15,91 @@ r = praw.Reddit(client_id=client_id,
 sub_main     = r.subreddit(main_sub)
 sub_modmail  = r.subreddit(modmail_sub)
 
+moderators = []
+mods = sub_main.moderator()
+for mod in mods:
+  moderators.append(mod.name)
+
+#temporary
+state_switch = ""
+iteration = 1
+
 def read_modmail():
-  for mail in sub_main.modmail.conversations():
-    
-    post_body = ""
+  #temporary
+  global state_switch, iteration
+  if iteration == 1:
+    state_switch = "all"
+    print("Using state_switch 1 - all")
+  elif iteration == 2:
+    state_switch = "archived"
+    print("Using state_switch 2 - archived")
+  elif iteration == 3:
+    state_switch = "mod"
+    print("Using state_switch 3 - mod")
 
-    title = mail.authors[0].name + " | " + mail.subject + " (" + mail.messages[0].date[:10] + ")"
+  for mail in sub_main.modmail.conversations(limit=15, state=state_switch):
 
+    post_body = "https://mod.reddit.com/mail/all/" + mail.id + "\n\n---\n\n"
+
+    title = ""
+    try:
+      title += str(mail.user)
+    except:
+      title += "Mod thread"
+    title += " | " + mail.subject + " (" + mail.messages[0].date[:10] + ")"
     for message in mail.messages:
       post_body += "####[/u/" + message.author.name
       if message.is_internal:
-        post_body += " (private)](/#private)"
-      elif mail.authors[0].name == message.author.name:
-        post_body += " (user)](/#op)"
+        post_body += " (private)](##private)"
+      elif message.author.name in moderators:
+        post_body += "](##mod)"
       else:
-        post_body += "](/#mod)"
-      post_body +=  "\n\n" + message.body_markdown + "\n\n---\n\n"
+        post_body += " (user)](##op)"
+      if len(message.body_markdown) > 500:
+        message_body = message.body_markdown[:500] + "..."
+      else:
+        message_body = message.body_markdown
+      post_body +=  "\n\n" + message_body + "\n\n---\n\n"
 
     mail_exists, num_replies = db_read(id=mail.id)
 
     if mail_exists != False:
       if mail.num_messages > num_replies:
-        mail_old(mail, post_body)
+        mail_old(mail, post_body, title)
 
         #TODO count all new mails, add mod action for mod
     else:
       mail_new(mail, post_body, title)
 
-      #if mail.is_internal: figure out how to read mod discussions tbd
-      # if mail.subject == "You've been banned from participating in r/" + mail.owner.display_name:
-      #   title += " [Ban thread]" just do this with automod?
-      # add mod actions for mods
+  #temporary
+  if state_switch == "all":
+    iteration = 2
+    print("Switching to iteration 2 - archived")
+  elif state_switch =="archived":
+    iteration = 3
+    print("Switching to iteration 3 - mod")
+  elif state_switch == "mod":
+    iteration = 1
+    print("Switching to iteration 1 - all")
 
 def mail_new(mail, body, title):
   post = sub_modmail.submit(title, selftext=body, send_replies=False)
-  print(title + " || " + str(mail.num_messages))
   db_write(mail.id, mail.num_messages, thread_id=post.id)
+  print("Created: " + title + " | replies: " + str(mail.num_messages))
 
-def mail_old(mail, body):
-  thread_id = db_read(mail.id)
-  db_write(mail.id, mail.num_replies)
-  submission = sub_modmail.Submission(r, id=thread_id)
+def mail_old(mail, body, title):
+  thread_id, asdf = db_read(mail.id)
+  db_write(mail.id, mail.num_messages)
+  submission = r.submission(id=thread_id)
 
   try:
     submission.edit(body)
+    print("Updated: " + title + " | replies: " + str(mail.num_messages))
   except:
-    post = sub_modmail.submit(submission.title, selftext=body, send_replies=False)
+    post = sub_modmail.submit(title, selftext=body, send_replies=False)
     submission.delete()
     db_write(mail.id, mail.num_messages, thread_id=post.id)
+    print("Reposted: " + title + " | replies: " + str(mail.num_messages))
 
 def db_read(id):
   exists = False
@@ -110,4 +145,3 @@ def db_mod_actions(user):
 if __name__ == '__main__':
   while True:
     read_modmail()
-    sleep(30)
