@@ -1,4 +1,5 @@
 secrets.py
+praw.ini
 *.db
 __pycache__
 ideas

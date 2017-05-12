@@ -4,13 +4,10 @@
 import sqlite3
 import praw
 
-from secrets import client_id, client_secret, password, user_agent, username, modmail_db, mods_db, main_sub, modmail_sub
+from secrets import modmail_db, mods_db, main_sub, modmail_sub
 
-r = praw.Reddit(client_id=client_id,
-                client_secret=client_secret,
-                user_agent=user_agent,
-                username=username,
-                password=password)
+# https://praw.readthedocs.io/en/latest/getting_started/configuration/prawini.html
+r = praw.Reddit('modmail_bot')
 
 sub_main     = r.subreddit(main_sub)
 sub_modmail  = r.subreddit(modmail_sub)
@@ -29,13 +26,10 @@ def read_modmail():
   global state_switch, iteration
   if iteration == 1:
     state_switch = "all"
-    print("Using state_switch 1 - all")
   elif iteration == 2:
     state_switch = "archived"
-    print("Using state_switch 2 - archived")
   elif iteration == 3:
     state_switch = "mod"
-    print("Using state_switch 3 - mod")
 
   for mail in sub_main.modmail.conversations(limit=15, state=state_switch):
 
@@ -54,7 +48,7 @@ def read_modmail():
       elif message.author.name in moderators:
         post_body += "](##mod)"
       else:
-        post_body += " (user)](##op)"
+        post_body += " (user)](https://reddit.com/user/" + message.author.name + "#op)"
       if len(message.body_markdown) > 500:
         message_body = message.body_markdown[:500] + "..."
       else:
@@ -67,20 +61,17 @@ def read_modmail():
       if mail.num_messages > num_replies:
         mail_old(mail, post_body, title)
 
-        #TODO count all new mails, add mod action for mod
+        #TODO count all new mails, add mod action for mod, once a month call that thing that posts the thread
     else:
       mail_new(mail, post_body, title)
 
   #temporary
   if state_switch == "all":
     iteration = 2
-    print("Switching to iteration 2 - archived")
   elif state_switch =="archived":
     iteration = 3
-    print("Switching to iteration 3 - mod")
   elif state_switch == "mod":
     iteration = 1
-    print("Switching to iteration 1 - all")
 
 def mail_new(mail, body, title):
   post = sub_modmail.submit(title, selftext=body, send_replies=False)
