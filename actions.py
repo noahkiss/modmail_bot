@@ -12,7 +12,8 @@ def read_mod_actions(moderator, subreddit):
   exists = False
   actions = 0
 
-  subreddit = subreddit.lower()
+  subreddit = str(subreddit).lower()
+  moderator = str(moderator).lower()
 
   db = sqlite3.connect("databases/mods.db")
   curs = db.cursor()
@@ -21,8 +22,8 @@ def read_mod_actions(moderator, subreddit):
   rows = curs.fetchall()
   
   for row in rows:
-    if row[0] == moderator:
-      if row[1] == subreddit:
+    if str(row[0]) == moderator:
+      if str(row[1]) == subreddit:
         exists = True
         actions = row[2]
       else:
@@ -36,8 +37,11 @@ def add_mod_action(moderator, subreddit):
   curs = db.cursor()
 
   subreddit = subreddit.lower()
+  moderator = moderator.lower()
 
   exists, actions = read_mod_actions(moderator, subreddit)
+  print(exists)
+  print(actions)
 
   if exists is False:
     curs.execute('''INSERT INTO mods(moderator, subreddit, actions) VALUES(?,?,?)''', (moderator, subreddit, 1))
@@ -87,7 +91,7 @@ def post_mod_actions():
     mods = reddit.subreddit(key).moderator()
     for mod in mods:
       if 'all' in mod.mod_permissions or 'mail' in mod.mod_permissions:
-        reddit.redditor(mod.name).message(message_title, message_body, from_subreddit=key)
+        reddit.redditor(mod.name).message(message_title, message_body)
 
 
 def reset_mod_actions():
