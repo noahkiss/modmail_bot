@@ -1,5 +1,4 @@
-secrets.py
 praw.ini
 *.db
+subreddits.py
 __pycache__
-ideas
