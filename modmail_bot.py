@@ -28,7 +28,7 @@ class Modmail_bot():
       state_switch = "mod"
     # temporary #
 
-    for mail in reddit.subreddit("all").modmail.conversations(limit=15, state=state_switch): # state_switch part of temporary #
+    for mail in reddit.subreddit("all").modmail.conversations(limit=30, state=state_switch): # state_switch part of temporary #
       post_body = "####https://mod.reddit.com/mail/all/" + mail.id + "\n\n---\n\n"
       title = ""
 
@@ -65,10 +65,12 @@ class Modmail_bot():
         if message.is_internal:
           post_body += " (private)](##private)"
           if count > num_replies:
+            print(message.author.name)
             actions.add_mod_action(str(message.author.name), str(mail.owner))
         elif message.author.name in moderators:
           post_body += "](##mod)"
           if count > num_replies:
+            print(message.author.name)
             actions.add_mod_action(str(message.author.name), str(mail.owner))
         else:
           post_body += " (user)](https://reddit.com/user/" + message.author.name + "#op)"
