@@ -65,12 +65,10 @@ class Modmail_bot():
         if message.is_internal:
           post_body += " (private)](##private)"
           if count > num_replies:
-            print(message.author.name)
             actions.add_mod_action(str(message.author.name), str(mail.owner))
         elif message.author.name in moderators:
           post_body += "](##mod)"
           if count > num_replies:
-            print(message.author.name)
             actions.add_mod_action(str(message.author.name), str(mail.owner))
         else:
           post_body += " (user)](https://reddit.com/user/" + message.author.name + "#op)"

@@ -40,8 +40,6 @@ def add_mod_action(moderator, subreddit):
   moderator = moderator.lower()
 
   exists, actions = read_mod_actions(moderator, subreddit)
-  print(exists)
-  print(actions)
 
   if exists is False:
     curs.execute('''INSERT INTO mods(moderator, subreddit, actions) VALUES(?,?,?)''', (moderator, subreddit, 1))
