@@ -96,7 +96,7 @@ class Modmail_bot():
     # temporary #
 
   def read_messages(self):
-    read_mod_actions
+    #actions.read_mod_actions
     pass
 
   def post_thread(self, mail, body, title, sub_mail, new=False):
