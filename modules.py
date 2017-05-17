@@ -1,4 +1,9 @@
-# delete comment chain
-# etc
-# reply to message if ban in title and not you've been banned, add private note to link to original ban message if found
-# check moderator log to find actions done
+def nuke_comment_chain(comment):
+  pass
+
+def moderator_log(subreddit, user=None, moderator=None, keyword=None, action=None):
+  pass
+
+def find_ban_thread(user):
+  return None
+
