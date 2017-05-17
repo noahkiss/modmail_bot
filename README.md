@@ -1,7 +1,7 @@
-#modmail_bot v2.0
+##modmail_bot v2.0
 ---
 
-**This is modmail_bot's first release. If you have issues, please open an issue. If you'd like to help contribute, feel free to open a pull request.**
+*This is modmail_bot's first release. If you have issues, please open an issue. If you'd like to help contribute, feel free to open a pull request.*
 ---
 
 ##To run your own instance of modmail_bot, follow these steps:
