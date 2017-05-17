@@ -6,7 +6,6 @@ import sqlite3
 from subreddits import subs_dict
 
 import actions
-import modlog
 
 reddit = praw.Reddit("modmail_bot")
 
