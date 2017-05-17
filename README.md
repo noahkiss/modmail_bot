@@ -2,6 +2,14 @@
 
 *This is modmail_bot's first release. If you have issues, please open an issue. If you'd like to help contribute, feel free to open a pull request.*
 
+## What is modmail_bot?
+
+modmail_bot is designed to archive modmail threads from a specific subreddit to that subreddit's modmail backroom. This enables searching of modmail, which can be very useful to find previous user infractions, mod discussion topics, etc. Threads in the backroom will be updated with new replies, keeping an up-to-date reflection of the modmail threads.
+
+In addition, modmail_bot will keep a running tally of moderator interactions in modmail, enabling subreddits to "fill in the gap" when it comes to mod stats. This is especially useful to judge new moderator engagement when deciding to promote/demote, because sometimes approvals/removals/bans don't tell the whole story, and modmail is a very important aspect to subreddit moderating. Each month a Mod Stats thread will be posted to the backroom sub to archive interactions, at which point the stats will be reset.
+
+I hope to add more functionality in the future, and I am always open to suggestions! Some functionality that I hope to add in the future includes a slack plugin, the ability to query mod interaction stats on the fly, a comment chain nuke tool that doesn't require you to stay on the page (useful for large chains), etc.
+
 ## To run your own instance of modmail_bot, follow these steps:
 
 1. Create the account you will use to run your instance of modmail_bot
