@@ -1,0 +1,6 @@
+[modmail_bot]
+client_id=XXX (obtained on your reddit instance page)
+client_secret=XXX (obtained on your reddit instance page)
+password=account_password_here
+username=account_username_here
+user_agent=example user agent by /u/reddit
