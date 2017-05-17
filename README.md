@@ -1,10 +1,10 @@
-##modmail_bot v2.0
+## modmail_bot v2.0
 ---
 
 *This is modmail_bot's first release. If you have issues, please open an issue. If you'd like to help contribute, feel free to open a pull request.*
 ---
 
-##To run your own instance of modmail_bot, follow these steps:
+## To run your own instance of modmail_bot, follow these steps:
 
 1. Create the account you will use to run your instance of modmail_bot
 
@@ -23,6 +23,6 @@
 8. Create a cron job to run `actions.py` on the first of every month, which will create a post in your modmail sub with moderator stats in modmail for the past month, and send out a mod mailer to everyone. Example cron job: `0 18 1 * * /usr/bin/python3 path/to/actions.py`
 ---
 
-#####Make sure to check back for updates and added functionality in the future!
+##### Make sure to check back for updates and added functionality in the future!
 
-######Feel free to reach out to me on reddit: [/u/noahjk](https://reddit.com/user/noahjk)
+###### Feel free to reach out to me on reddit: [/u/noahjk](https://reddit.com/user/noahjk)
