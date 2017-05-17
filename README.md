@@ -12,7 +12,7 @@
 
 4. Rename praw.ini.example to praw.ini and fill in the 5 values. Leave the first line alone.
 
-5. Run `pip install -r requirements.txt` to install dependencies. 
+5. Run `pip3 install -r requirements.txt` to install dependencies. Note that `sqlite3 >= 3.16.0` is commented out - make sure your version is up to date. 
 
 6. Run `python3 setup.py` and add in your `Main Subreddit/Modmail Subreddit` pairs. This will also initialize your database files.
 
