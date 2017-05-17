@@ -8,17 +8,19 @@
 
 2. Follow PRAW's [quick-start guide](https://praw.readthedocs.io/en/latest/getting_started/quick_start.html) to obtaining your reddit instance
 
-3. Rename praw.ini.example to praw.ini and fill in the 5 values. Leave the first line alone.
+3. [Clone or download](https://help.github.com/articles/cloning-a-repository/) this repository to your working directory
 
-4. Run `pip install -r requirements.txt` to install dependencies. 
+4. Rename praw.ini.example to praw.ini and fill in the 5 values. Leave the first line alone.
 
-5. Run `python3 setup.py` and add in your `Main Subreddit/Modmail Subreddit` pairs. This will also initialize your database files.
+5. Run `pip install -r requirements.txt` to install dependencies. 
 
-6. Eventually `backfill.py` will catch you up on modmail. This has yet to be written.
+6. Run `python3 setup.py` and add in your `Main Subreddit/Modmail Subreddit` pairs. This will also initialize your database files.
 
-7. The `modmail_bot.py` file is meant to run continuously. Do this however you like. Hint: you might start out with [screen](https://www.howtoforge.com/linux_screen), but I'm not really qualified to tell you how to keep it running.
+7. Eventually `backfill.py` will catch you up on modmail. This has yet to be written.
 
-8. Create a cron job to run `actions.py` on the first of every month, which will create a post in your modmail sub with moderator stats in modmail for the past month, and send out a mod mailer to everyone. Example cron job: `0 18 1 * * /usr/bin/python3 path/to/actions.py`
+8. The `modmail_bot.py` file is meant to run continuously. Do this however you like. Hint: you might start out with [screen](https://www.howtoforge.com/linux_screen), but I'm not really qualified to tell you how to keep it running.
+
+9. Create a cron job to run `actions.py` on the first of every month, which will create a post in your modmail sub with moderator stats in modmail for the past month, and send out a mod mailer to everyone. Example cron job: `0 18 1 * * /usr/bin/python3 path/to/actions.py`
 
 ##### Make sure to check back for updates and added functionality in the future!
 
